@@ -1,5 +1,6 @@
 "use client";
 
+import axios from "axios";
 import { useState, useEffect } from "react";
 
 export default function Home() {
@@ -8,16 +9,19 @@ export default function Home() {
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => setValue(e.target.value);
 
   const handleSubmit = async () => {
-    const response = await fetch("/api/chatbot", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ question: value })
-    });
-    const data = await response.json();
-
-    setResponse(data.message); // Assuming the response has a 'message' property
+    try {
+      const response = await axios.post("/api/chatbot", {
+        question: value
+      }, {
+        headers: {
+          "Content-Type": "application/json"
+        }
+      });
+  
+      setResponse(response.data.message); // Assuming the response has a 'message' property
+    } catch (error) {
+      console.error("Error:", error);
+    }
   };
 
   useEffect(() => {
